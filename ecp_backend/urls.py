@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
 from rest_framework_swagger.views import get_swagger_view
+from ecp.views import predict
 
 
 schema_view = get_swagger_view(title='ECP API')
@@ -24,5 +25,6 @@ schema_view = get_swagger_view(title='ECP API')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/doc/', schema_view),
+    path('api/prediction/', predict),
     url(r'^api-auth/', include('rest_framework.urls')),
 ]
