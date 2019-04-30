@@ -33,11 +33,11 @@ def predict(request):
 
             code = models[0].split("-")[2].split(".")[0]
             first_digit_code = (int(str(code)[:1]))
-            last_digit_code = (int(str(code)[1:]))
+            last_digit_code = (int(str(code)[-1:]))
 
-            medium_predicted = None
-            high_predicted = None
-            low_predicted = None
+            medium_predicted = 0
+            high_predicted = 0
+            low_predicted = 0
 
             message = None
 
