@@ -53,21 +53,21 @@ def predict(request):
                 if last_digit_code == 0:
                     est_medium = joblib.load(base_path + '\{0}-mediumDailyUsage-200.pkl'.format(str(user_id)))
                     medium_predicted = days * est_medium.predict([[days, month]])[0]
-                    est_high = joblib.load(base_path + '\{0}-mediumDailyUsage-210.pkl'.format(str(user_id)))
+                    est_high = joblib.load(base_path + '\{0}-highDailyUsage-210.pkl'.format(str(user_id)))
                     high_predicted = days * est_high.predict([[days, month]])[0]
                 else:
                     est_medium = joblib.load(base_path + '\{0}-mediumDailyUsage-201.pkl'.format(str(user_id)))
                     medium_predicted = days * est_medium.predict([[days, month]])[0]
-                    est_high = joblib.load(base_path + '\{0}-mediumDailyUsage-211.pkl'.format(str(user_id)))
+                    est_high = joblib.load(base_path + '\{0}-highDailyUsage-211.pkl'.format(str(user_id)))
                     high_predicted = days * est_high.predict([[days, month]])[0]
                     message = "Results may not be percise due to low training data!"
             elif first_digit_code == 3:
                 if last_digit_code == 0:
                     est_medium = joblib.load(base_path + '\{0}-mediumDailyUsage-300.pkl'.format(str(user_id)))
                     medium_predicted = days * est_medium.predict([[days, month]])[0]
-                    est_high = joblib.load(base_path + '\{0}-mediumDailyUsage-310.pkl'.format(str(user_id)))
+                    est_high = joblib.load(base_path + '\{0}-highDailyUsage-310.pkl'.format(str(user_id)))
                     high_predicted = days * est_high.predict([[days, month]])[0]
-                    est_low = joblib.load(base_path + '\{0}-mediumDailyUsage-320.pkl'.format(str(user_id)))
+                    est_low = joblib.load(base_path + '\{0}-lowDailyUsage-320.pkl'.format(str(user_id)))
                     low_predicted = days * est_low.predict([[days, month]])[0]
 
                 else:
