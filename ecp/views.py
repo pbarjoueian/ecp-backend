@@ -13,10 +13,6 @@ from sklearn.externals import joblib
 from sklearn.ensemble import AdaBoostRegressor
 
 
-DATASET_BASE_PATH = '/home/pbarjoueian/repos/ecp/dataset/'
-all_change_ids = pd.read_csv(DATASET_BASE_PATH + 'xAllChanges_xSubscriptionId_fk.csv')
-
-
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
 def predict(request):

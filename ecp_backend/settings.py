@@ -135,8 +135,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MODELS_BASE_PATH = '/home/pbarjoueian/repos/ecp/models/'
-DATASET_BASE_PATH = '/home/pbarjoueian/repos/ecp/dataset/'
+MODELS_BASE_PATH = '/home/peyman/repos/ecp/models/'
+DATASET_BASE_PATH = '/home/peyman/repos/ecp/dataset/'
 
 ALL_MEDIUM_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-AllChanges-Medium.pkl')
 ALL_HIGH_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-AllChanges-High.pkl')
