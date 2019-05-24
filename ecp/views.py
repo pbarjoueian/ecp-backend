@@ -78,6 +78,8 @@ def predict(request):
                     high_predicted = settings.ALL_HIGH_MODEL.predict(df[features])[
                         0] * days
 
+                message = "Results may be not accurate due to changes in users data!"
+
             else:
                 df = settings.NO_DF.loc[settings.NO_DF['xSubscriptionId_fk'].isin([user_id])]
                 df = df.iloc[-1:]
@@ -103,8 +105,6 @@ def predict(request):
                         0] * days
                     high_predicted = settings.NO_HIGH_MODEL.predict(df[features])[
                         0] * days
-
-                message = "Results may be not accurate due to changes in users data!"
 
             return Response({
                 "success": True,
