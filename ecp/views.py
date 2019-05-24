@@ -1,20 +1,20 @@
+from django.conf import settings
+
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework import permissions
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
 
-import glob
+import joblib
+import numpy as np
+import pandas as pd
+
 from sklearn.externals import joblib
-import os, fnmatch
+from sklearn.ensemble import AdaBoostRegressor
 
 
-def find(pattern, path):
-    result = []
-    for root, dirs, files in os.walk(path):
-        for name in files:
-            if fnmatch.fnmatch(name, pattern):
-                result.append(os.path.join(root, name))
-    return result
+DATASET_BASE_PATH = '/home/pbarjoueian/repos/ecp/dataset/'
+all_change_ids = pd.read_csv(DATASET_BASE_PATH + 'xAllChanges_xSubscriptionId_fk.csv')
 
 
 @api_view(['GET'])
@@ -23,69 +23,95 @@ def predict(request):
     """
     Get predictions for a particular user.
     """
+
+    features = ['xCycleCode', 'xFamilyNum', 'xFaze', 'xAmper', 'xRegionName_Roustaei',
+                'xRegionName_Shahri', 'xUsageGroupName_Keshavarzi', 'xUsageGroupName_Khanegi',
+                'xUsageGroupName_Omoomi', 'xUsageGroupName_Sanati', 'xUsageGroupName_Sayer',
+                'xBakhshCode_1', 'xBakhshCode_2', 'xBakhshCode_4',
+                'xTimeControlCode_1', 'xTimeControlCode_2', 'xTimeControlCode_3',
+                'xTariffOldCode_1010', 'xTariffOldCode_1011', 'xTariffOldCode_1110',
+                'xTariffOldCode_1111', 'xTariffOldCode_1990', 'xTariffOldCode_2110',
+                'xTariffOldCode_2210', 'xTariffOldCode_2310', 'xTariffOldCode_2410',
+                'xTariffOldCode_2510', 'xTariffOldCode_2610', 'xTariffOldCode_2710',
+                'xTariffOldCode_2990', 'xTariffOldCode_2992', 'xTariffOldCode_3110',
+                'xTariffOldCode_3210', 'xTariffOldCode_3310', 'xTariffOldCode_3410',
+                'xTariffOldCode_3520', 'xTariffOldCode_3540', 'xTariffOldCode_3740',
+                'xTariffOldCode_3991', 'xTariffOldCode_4410', 'xTariffOldCode_4610',
+                'xTariffOldCode_4990', 'xTariffOldCode_5110', 'xTariffOldCode_5990',
+                'days_difference', 'month']
+
     if request.method == 'GET':
         try:
-            base_path = 'C:/Users/pbarjoueian/Documents/projects/repos/ecp/dataset/users_data/'
             user_id = request.GET.get('user_id')
             days = int(request.GET.get('days'))
             month = int(request.GET.get('month'))
-            models = glob.glob(base_path + str(user_id) + '*.pkl')
-
-            code = models[0].split("-")[2].split(".")[0]
-            first_digit_code = (int(str(code)[:1]))
-            last_digit_code = (int(str(code)[-1:]))
-
+            
             medium_predicted = 0
             high_predicted = 0
             low_predicted = 0
 
             message = None
 
-            if first_digit_code == 1:
-                if last_digit_code == 0:
-                    est = joblib.load(base_path + '\{0}-mediumDailyUsage-100.pkl'.format(str(user_id)))
-                    medium_predicted = days * est.predict([[days, month]])[0]
-                else:
-                    est = joblib.load(base_path + '\{0}-mediumDailyUsage-101.pkl'.format(str(user_id)))
-                    medium_predicted = days * est.predict([[days, month]])[0]
-                    message = "Results may not be percise due to low training data!"
-            elif first_digit_code == 2:
-                if last_digit_code == 0:
-                    est_medium = joblib.load(base_path + '\{0}-mediumDailyUsage-200.pkl'.format(str(user_id)))
-                    medium_predicted = days * est_medium.predict([[days, month]])[0]
-                    est_high = joblib.load(base_path + '\{0}-highDailyUsage-210.pkl'.format(str(user_id)))
-                    high_predicted = days * est_high.predict([[days, month]])[0]
-                else:
-                    est_medium = joblib.load(base_path + '\{0}-mediumDailyUsage-201.pkl'.format(str(user_id)))
-                    medium_predicted = days * est_medium.predict([[days, month]])[0]
-                    est_high = joblib.load(base_path + '\{0}-highDailyUsage-211.pkl'.format(str(user_id)))
-                    high_predicted = days * est_high.predict([[days, month]])[0]
-                    message = "Results may not be percise due to low training data!"
-            elif first_digit_code == 3:
-                if last_digit_code == 0:
-                    est_medium = joblib.load(base_path + '\{0}-mediumDailyUsage-300.pkl'.format(str(user_id)))
-                    medium_predicted = days * est_medium.predict([[days, month]])[0]
-                    est_high = joblib.load(base_path + '\{0}-highDailyUsage-310.pkl'.format(str(user_id)))
-                    high_predicted = days * est_high.predict([[days, month]])[0]
-                    est_low = joblib.load(base_path + '\{0}-lowDailyUsage-320.pkl'.format(str(user_id)))
-                    low_predicted = days * est_low.predict([[days, month]])[0]
+            if len(settings.ALL_CHANGE_IDS.loc[settings.ALL_CHANGE_IDS['xSubscriptionId_fk'].isin([user_id])]):
+                df = settings.ALL_DF.loc[settings.ALL_DF['xSubscriptionId_fk'].isin([user_id])]
+                df = df.iloc[-1:]
+                df = df.drop(['xSubscriptionId_fk'], 1)
+                df = df.drop(['xCounterBuldingNo'], 1)
+                df = df.drop(df.columns[[0, 1]], 1).iloc[:, : 48]
 
-                else:
-                    est_medium = joblib.load(base_path + '\{0}-mediumDailyUsage-301.pkl'.format(str(user_id)))
-                    medium_predicted = days * est_medium.predict([[days, month]])[0]
-                    est_high = joblib.load(base_path + '\{0}-mediumDailyUsage-311.pkl'.format(str(user_id)))
-                    high_predicted = days * est_high.predict([[days, month]])[0]
-                    est_low = joblib.load(base_path + '\{0}-mediumDailyUsage-321.pkl'.format(str(user_id)))
-                    low_predicted = days * est_low.predict([[days, month]])[0]
-                    message = "Results may not be percise due to low training data!"
-            return Response(
-                {"success": True,
-                 "message": message,
-                 "prediction": {"medium_predicted": medium_predicted,
-                                "high_predicted": high_predicted,
-                                "low_predicted": low_predicted}
-                },
-                status=status.HTTP_200_OK)
+                df['days_difference'] = days
+                df['month'] = month
+
+                if df['xTimeControlCode_1'].iloc[0].any():
+                    medium_predicted = settings.ALL_MEDIUM_MODEL.predict(df[features])[
+                        0] * days
+                if df['xTimeControlCode_2'].iloc[0].any():
+                    medium_predicted = settings.ALL_MEDIUM_MODEL.predict(df[features])[
+                        0] * days
+                    high_predicted = settings.ALL_HIGH_MODEL.predict(df[features])[
+                        0] * days
+                if df['xTimeControlCode_3'].iloc[0].any():
+                    low_predicted = settings.ALL_LOW_MODEL.predict(df[features])[
+                        0] * days
+                    medium_predicted = settings.ALL_MEDIUM_MODEL.predict(df[features])[
+                        0] * days
+                    high_predicted = settings.ALL_HIGH_MODEL.predict(df[features])[
+                        0] * days
+
+            else:
+                df = settings.NO_DF.loc[settings.NO_DF['xSubscriptionId_fk'].isin([user_id])]
+                df = df.iloc[-1:]
+                df = df.drop(['xSubscriptionId_fk'], 1)
+                df = df.drop(['xCounterBuldingNo'], 1)
+                df = df.drop(df.columns[[0, 1]], 1).iloc[:, : 48]
+
+                df['days_difference'] = days
+                df['month'] = month
+
+                if df['xTimeControlCode_1'].any():
+                    medium_predicted = settings.NO_MEDIUM_MODEL.predict(df[features])[
+                        0] * days
+                if df['xTimeControlCode_2'].any():
+                    medium_predicted = settings.NO_MEDIUM_MODEL.predict(df[features])[
+                        0] * days
+                    high_predicted = settings.NO_HIGH_MODEL.predict(df[features])[
+                        0] * days
+                if df['xTimeControlCode_3'].any():
+                    low_predicted = settings.NO_LOW_MODEL.predict(df[features])[
+                        0] * days
+                    medium_predicted = settings.NO_MEDIUM_MODEL.predict(df[features])[
+                        0] * days
+                    high_predicted = settings.NO_HIGH_MODEL.predict(df[features])[
+                        0] * days
+
+            return Response({
+                "success": True,
+                "message": message,
+                "prediction": {
+                    "medium_predicted": round(medium_predicted, 10),
+                    "high_predicted": round(high_predicted, 10),
+                    "low_predicted": round(low_predicted, 10)}
+            }, status=status.HTTP_200_OK)
 
         except Exception as ex:
             error_content = {
@@ -97,5 +123,4 @@ def predict(request):
                     "message": ex.__str__(),
                 },
             }
-            return Response(
-                error_content, status=status.HTTP_400_BAD_REQUEST)
+            return Response(error_content, status=status.HTTP_404_NOT_FOUND)

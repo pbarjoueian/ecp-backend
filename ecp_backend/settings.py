@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import joblib
+import pandas as pd
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -131,3 +134,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MODELS_BASE_PATH = '/home/pbarjoueian/repos/ecp/models/'
+DATASET_BASE_PATH = '/home/pbarjoueian/repos/ecp/dataset/'
+
+ALL_MEDIUM_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-AllChanges-Medium.pkl')
+ALL_HIGH_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-AllChanges-High.pkl')
+ALL_LOW_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-AllChanges-Low.pkl')
+
+NO_MEDIUM_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-NoChange-Medium.pkl')
+NO_HIGH_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-NoChange-High.pkl')
+NO_LOW_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-NoChange-Low.pkl')
+
+ALL_DF = pd.read_csv(DATASET_BASE_PATH + 'xAllChanges.csv')
+NO_DF = pd.read_csv(DATASET_BASE_PATH + 'xNoChange.csv')
+
+ALL_CHANGE_IDS = pd.read_csv(DATASET_BASE_PATH + 'xAllChanges_xSubscriptionId_fk.csv')
+# NO_CHANGE_IDS = pd.read_csv(DATASET_BASE_PATH + 'xNoChange_xSubscriptionId_fk.csv')
