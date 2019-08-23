@@ -135,19 +135,41 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MODELS_BASE_PATH = '/home/peyman/repos/ecp/models/'
+MODELS_BASE_PATH = '/home/peyman/repos/ecp/models/rf/'
 DATASET_BASE_PATH = '/home/peyman/repos/ecp/dataset/'
 
-ALL_MEDIUM_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-AllChanges-Medium.pkl')
-ALL_HIGH_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-AllChanges-High.pkl')
-ALL_LOW_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-AllChanges-Low.pkl')
+# ALL_MEDIUM_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-AllChanges-Medium.pkl')
+# ALL_HIGH_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-AllChanges-High.pkl')
+# ALL_LOW_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-AllChanges-Low.pkl')
 
-NO_MEDIUM_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-NoChange-Medium.pkl')
-NO_HIGH_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-NoChange-High.pkl')
-NO_LOW_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-NoChange-Low.pkl')
+# NO_MEDIUM_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-NoChange-Medium.pkl')
+# NO_HIGH_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-NoChange-High.pkl')
+# NO_LOW_MODEL = joblib.load(MODELS_BASE_PATH + 'ABR-NoChange-Low.pkl')
 
-ALL_DF = pd.read_csv(DATASET_BASE_PATH + 'xAllChanges.csv')
-NO_DF = pd.read_csv(DATASET_BASE_PATH + 'xNoChange.csv')
+# ALL_DF = pd.read_csv(DATASET_BASE_PATH + 'xAllChanges.csv')
+# NO_DF = pd.read_csv(DATASET_BASE_PATH + 'xNoChange.csv')
 
-ALL_CHANGE_IDS = pd.read_csv(DATASET_BASE_PATH + 'xAllChanges_xSubscriptionId_fk.csv')
+# ALL_CHANGE_IDS = pd.read_csv(DATASET_BASE_PATH + 'xAllChanges_xSubscriptionId_fk.csv')
 # NO_CHANGE_IDS = pd.read_csv(DATASET_BASE_PATH + 'xNoChange_xSubscriptionId_fk.csv')
+
+DATASET = pd.read_csv(DATASET_BASE_PATH + 'dbBills_cleaned.csv')
+
+HOME_MODEL_MEDIUM = joblib.load(MODELS_BASE_PATH + 'RandomForest_Khanegi_Medium.pkl')
+HOME_MODEL_HIGH = joblib.load(MODELS_BASE_PATH + 'RandomForest_Khanegi_High.pkl')
+HOME_MODEL_LOW = joblib.load(MODELS_BASE_PATH + 'RandomForest_Khanegi_Low.pkl')
+
+AGRICULTURE_MODEL_MEDIUM = joblib.load(MODELS_BASE_PATH + 'RandomForest_Keshavarzi_Medium.pkl')
+AGRICULTURE_MODEL_HIGH = joblib.load(MODELS_BASE_PATH + 'RandomForest_Keshavarzi_High.pkl')
+AGRICULTURE_MODEL_LOW = joblib.load(MODELS_BASE_PATH + 'RandomForest_Keshavarzi_Low.pkl')
+
+PUBLIC_MODEL_MEDIUM = joblib.load(MODELS_BASE_PATH + 'RandomForest_Omoomi_Medium.pkl')
+PUBLIC_MODEL_HIGH = joblib.load(MODELS_BASE_PATH + 'RandomForest_Omoomi_High.pkl')
+PUBLIC_MODEL_LOW = joblib.load(MODELS_BASE_PATH + 'RandomForest_Omoomi_Low.pkl')
+
+INDUSTRIAL_MODEL_MEDIUM = joblib.load(MODELS_BASE_PATH + 'RandomForest_Sanati_Medium.pkl')
+INDUSTRIAL_MODEL_HIGH = joblib.load(MODELS_BASE_PATH + 'RandomForest_Sanati_High.pkl')
+INDUSTRIAL_MODEL_LOW = joblib.load(MODELS_BASE_PATH + 'RandomForest_Sanati_Low.pkl')
+
+OTHER_MODEL_MEDIUM = joblib.load(MODELS_BASE_PATH + 'RandomForest_Sayer_Medium.pkl')
+OTHER_MODEL_HIGH = joblib.load(MODELS_BASE_PATH + 'RandomForest_Sayer_High.pkl')
+OTHER_MODEL_LOW = joblib.load(MODELS_BASE_PATH + 'RandomForest_Sayer_Low.pkl')
